@@ -5,6 +5,14 @@ from extensions import db, ma, jwt
 
 app = Flask(__name__)
 
+#-------------------------PAGINATE-----------------------------------#
+
+def paginate(query, page, per_page):
+    paginated = query.paginate(page=page, per_page=per_page, error_out=False)
+    items = paginated.items
+    total = paginated.total
+    return items, total
+
 #-------------------------CONFIGs------------------------------------#
 
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///journals.db'
