@@ -15,7 +15,7 @@ db.init_app(app)
 ma.init_app(app)
 jwt.init_app(app)
 
-migrate = Migrate(db, app)
+migrate = Migrate(app, db)
 
 #--------------------------ROUTEs-----------------------------------#
 
