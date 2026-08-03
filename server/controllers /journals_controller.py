@@ -1,4 +1,9 @@
+from extensions import db
+from models.journals import Journal
+from app import paginate
+
 ## CRUD OPERATIONS
+class JournalController:
 
 # Add a new journal to the database
 

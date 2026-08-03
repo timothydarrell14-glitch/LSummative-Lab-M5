@@ -1,5 +1,5 @@
 from extensions import db
-from models import Entry
+from models.entries import Entry
 from app import paginate
 
 
