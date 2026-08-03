@@ -7,6 +7,7 @@ class User(db.Model):
     name = db.Column(db.String, nullable=False)
     email = db.Column(db.String)
     password = db.Column(db.String, nullable=False)
+    journals = db.relationship('journals', back_populates='user')
 
     @validates('email')
     def validate_email(self, email):
