@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { Button, Error, Input, FormField, Label, Textarea } from "../styles";
+import { Button, Error, Input, FormField, Label} from "../styles";
 
 function SignUpForm({ onLogin }) {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [errors, setErrors] = useState([]);
@@ -12,13 +12,13 @@ function SignUpForm({ onLogin }) {
     e.preventDefault();
     setErrors([]);
     setIsLoading(true);
-    fetch("/signup", {
+    fetch("http://127.0.0.1:5555/signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        username,
+        email,
         password,
         password_confirmation: passwordConfirmation
       }),
@@ -35,13 +35,13 @@ function SignUpForm({ onLogin }) {
   return (
     <form onSubmit={handleSubmit}>
       <FormField>
-        <Label htmlFor="username">Username</Label>
+        <Label htmlFor="email">Email</Label>
         <Input
-          type="text"
-          id="username"
+          type="email"
+          id="email"
           autoComplete="off"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
       </FormField>
       <FormField>
