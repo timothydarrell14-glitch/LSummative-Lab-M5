@@ -1,9 +1,10 @@
 from flask import Flask, request, jsonify
 from flask_migrate import Migrate
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required
 
 from controllers.users_controller import UserController
 from controllers.journals_controller import JournalController
+from controllers.entries_controller import EntryController
 from extensions import db, ma, jwt
 from models import *
 from schemas import *
@@ -50,6 +51,7 @@ def login():
 
 # Users
 @app.route("/users", methods=['POST'])
+@jwt_required()
 def add_new_user():
     data = request.get_json()
     new_user = UserController.add_user(data)
@@ -58,11 +60,13 @@ def add_new_user():
     return jsonify({"message": "Missing required fields"}), 400
 
 @app.route("/users", methods=['GET'])
+@jwt_required()
 def get_all_users():
     users = UserController.get_all_users()
     return users_schema.jsonify(users), 200
 
 @app.route("/users/<int:user_id>", methods=['GET'])
+@jwt_required()
 def get_user_by_id(user_id):
     user = UserController.get_user_by_id(user_id)
     if user:
@@ -70,6 +74,7 @@ def get_user_by_id(user_id):
     return jsonify({"message": "User not found"}), 404
 
 @app.route("/users/<int:user_id>", methods=['PUT'])
+@jwt_required()
 def update_user(user_id):
     data = request.get_json()
     updated_user = UserController.update_user(user_id, data)
@@ -78,6 +83,7 @@ def update_user(user_id):
     return jsonify({"message": "User not found"}), 404
 
 @app.route("/users/<int:user_id>", methods=['DELETE'])
+@jwt_required()
 def delete_user(user_id):
     user = UserController.delete_user(user_id)
     if user is None:
@@ -85,6 +91,7 @@ def delete_user(user_id):
     return jsonify({"message": "User deleted successfully"}), 200
 # Journals
 @app.route("/journals", methods=['POST'])
+@jwt_required()
 def add_new_journal():
     data = request.get_json()
     new_journal = JournalController.add_journal(data)
@@ -93,11 +100,13 @@ def add_new_journal():
     return jsonify({"message": "Missing required fields"}), 400
 
 @app.route("/journals", methods=['GET'])
+@jwt_required()
 def get_all_journals():
     journals = JournalController.get_all_journals()
     return journals_schema.jsonify(journals), 200
 
 @app.route("/journals/<int:journal_id>", methods=['GET'])
+@jwt_required()
 def get_journal_by_id(journal_id):
     journal = JournalController.get_journal_by_id(journal_id)
     if journal:
@@ -105,6 +114,7 @@ def get_journal_by_id(journal_id):
     return jsonify({"message": "Journal not found"}), 404
 
 @app.route("/journals/<int:journal_id>", methods=['PUT'])
+@jwt_required()
 def update_journal(journal_id):
     data = request.get_json()
     updated_journal = JournalController.update_journal(journal_id, data)
@@ -113,6 +123,7 @@ def update_journal(journal_id):
     return jsonify({"message": "Journal not found"}), 404
 
 @app.route("/journals/<int:journal_id>", methods=['DELETE'])
+@jwt_required()
 def delete_journal(journal_id):
     journal = JournalController.delete_journal(journal_id)
     if journal is None:
@@ -120,6 +131,45 @@ def delete_journal(journal_id):
     return jsonify({"message": "Journal deleted successfully"}), 200
 
 # Entries
+@app.route("/entries", methods=['POST'])
+@jwt_required()
+def add_new_entry():
+    data = request.get_json()
+    new_entry = EntryController.add_entry(data)
+    if new_entry:
+        return entry_schema.jsonify(new_entry), 201
+    return jsonify({"message": "Missing required fields"}), 400
+
+@app.route("/entries", methods=['GET'])
+@jwt_required()
+def get_all_entries():
+    entries = EntryController.get_all_entries()
+    return entries_schema.jsonify(entries), 200
+
+@app.route("/entries/<int:entry_id>", methods=['GET'])
+@jwt_required()
+def get_entry_by_id(entry_id):
+    entry = EntryController.get_entry_by_id(entry_id)
+    if entry:
+        return entry_schema.jsonify(entry), 200
+    return jsonify({"message": "Entry not found"}), 404
+
+@app.route("/entries/<int:entry_id>", methods=['PUT'])
+@jwt_required()
+def update_entry(entry_id):
+    data = request.get_json()
+    updated_entry = EntryController.update_entry(entry_id, data)
+    if updated_entry:
+        return entry_schema.jsonify(updated_entry), 200
+    return jsonify({"message": "Entry not found"}), 404
+
+@app.route("/entries/<int:entry_id>", methods=['DELETE'])
+@jwt_required()
+def delete_entry(entry_id):
+    entry = EntryController.delete_entry(entry_id)
+    if entry is None:
+        return jsonify({"message": "Entry not found"}), 404
+    return jsonify({"message": "Entry deleted successfully"}), 200
 
 
 #--------------------------RUN--------------------------------#
