@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Button, Error, Input, FormField, Label} from "../styles";
 
 function SignUpForm({ onLogin }) {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
@@ -18,6 +19,7 @@ function SignUpForm({ onLogin }) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
+        name,
         email,
         password,
         password_confirmation: passwordConfirmation
@@ -34,6 +36,16 @@ function SignUpForm({ onLogin }) {
 
   return (
     <form onSubmit={handleSubmit}>
+      <FormField>
+              <Input
+                type="text"
+                id="name"
+                autoComplete="off"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+              <Label htmlFor="name">Name</Label>
+            </FormField>
       <FormField>
         <Label htmlFor="email">Email</Label>
         <Input
@@ -68,7 +80,7 @@ function SignUpForm({ onLogin }) {
         <Button type="submit">{isLoading ? "Loading..." : "Sign Up"}</Button>
       </FormField>
       <FormField>
-        {errors.map((err) => (
+        {errors?.map((err) => (
           <Error key={err}>{err}</Error>
         ))}
       </FormField>
