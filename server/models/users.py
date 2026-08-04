@@ -18,10 +18,10 @@ class User(db.Model):
     @validates('email')
     def validate_email(self, email):
         if not isinstance(email, str):
-            raise ValueError
+            raise ValueError('email must be a string')
         email = email.strip().lower()
         if '@' not in email or '.com' not in email:
-            raise ValueError
+            raise ValueError('email must contain @ and .com')
         return email
 
     def hash_password(self, password):

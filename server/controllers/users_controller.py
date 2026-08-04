@@ -10,13 +10,14 @@ class UserController:
     @classmethod
     def add_user(cls, data):
         payload = dict(data)
-        for field in ['username', 'email', 'password']:
+        for field in ['name', 'email', 'password']:
             if field not in payload:
                 return None
-        new_user = User(**payload)
-        db.session.add(new_user)
+        user = User(name=payload['name'], email=payload['email'], password=payload['password'])
+        user.hash_password(payload['password'])
+        db.session.add(user)
         db.session.commit()
-        return new_user
+        return user
 
 # Get all users from the database
     @classmethod
@@ -27,10 +28,7 @@ class UserController:
 # Get a specific user by ID from the database
     @classmethod
     def get_user_by_id(cls, user_id):
-        user = User.query.get(user_id)
-        if not user:
-            return None
-        return user
+        return User.query.get(user_id)
 
 # Update a specific user by ID in the database
     @classmethod
@@ -39,14 +37,12 @@ class UserController:
         if not user:
             return None
         payload = dict(data)
-        if not isinstance(payload, dict):
-            raise ValueError
-        if hasattr(payload, 'username'):
-            user.username = payload.username
-        if hasattr(payload, 'email'):
-            user.email = payload.email
-        if hasattr(payload, 'password'):
-            user.password = payload.password
+        if 'name' in payload and payload['name']:
+            user.name = payload['name']
+        if 'email' in payload and payload['email']:
+            user.email = payload['email']
+        if 'password' in payload and payload['password']:
+            user.hash_password(payload['password'])
         db.session.commit()
         return user
 

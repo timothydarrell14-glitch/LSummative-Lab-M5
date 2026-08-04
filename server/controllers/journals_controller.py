@@ -7,29 +7,25 @@ class JournalController:
 
 # Add a new journal to the database
     @classmethod
-    def add_journal(cls, data):
+    def add_journal(cls, data, user_id=None):
         payload = dict(data)
-        for field in ['name']:
-            if field not in payload:
-                return None
-        new_journal = Journal(**payload)
-        db.session.add(new_journal)
+        if 'name' not in payload or not payload['name']:
+            return None
+        journal = Journal(name=payload['name'], user_id=user_id)
+        db.session.add(journal)
         db.session.commit()
-        return new_journal
+        return journal
 
 # Get all journals from the database
     @classmethod
-    def get_all_journals(cls, user_id):
-        query = Journal.query.filter_by(user_id)
+    def get_all_journals(cls):
+        query = Journal.query
         return paginate(query=query)
 
 # Get a specific journal by ID from the database
     @classmethod
     def get_journal_by_id(cls, journal_id):
-        journal = Journal.query.get(journal_id)
-        if not journal:
-            return None
-        return journal
+        return Journal.query.get(journal_id)
 
 # Update a specific journal by ID in the database
     @classmethod
@@ -38,10 +34,8 @@ class JournalController:
         if not journal:
             return None
         payload = dict(data)
-        if not isinstance(payload, dict):
-            raise ValueError
-        if hasattr(payload, 'name'):
-            journal.name = payload.name
+        if 'name' in payload and payload['name']:
+            journal.name = payload['name']
         db.session.commit()
         return journal
 

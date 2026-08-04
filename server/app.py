@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_migrate import Migrate
-from flask_jwt_extended import create_access_token, jwt_required
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
+from marshmallow import Schema, fields
 
 from controllers.users_controller import UserController
 from controllers.journals_controller import JournalController
@@ -10,6 +11,12 @@ from models import *
 from schemas import *
 
 app = Flask(__name__)
+
+class LoginSchema(Schema):
+    email = fields.Email(required=True)
+    password = fields.String(required=True, load_only=True)
+
+login_schema = LoginSchema()
 
 #-------------------------PAGINATE-----------------------------------#
 
@@ -37,21 +44,24 @@ migrate = Migrate(app, db)
 # Login User
 @app.route("/login", methods=['POST'])
 def login():
-    data = user_schema.load(request.get_json())
-    if data:
-        user = User.query.filter_by(email=data.email).first()
-        if user and user.check_password(data.password):
-            token = create_access_token(identity=user.id, claims={
-                user.name: user.name,
-                user.id: user.id,
-                user.email: user.email
-            })
-            return jsonify({"token": token}), 200
+    payload = request.get_json(silent=True)
+    try:
+        data = login_schema.load(payload)
+    except Exception:
+        return jsonify({"message": "Invalid email or password"}), 400
+
+    user = User.query.filter_by(email=data['email']).first()
+    if user and user.check_password(data['password']):
+        token = create_access_token(identity=str(user.id), additional_claims={
+            'name': user.name,
+            'id': user.id,
+            'email': user.email
+        })
+        return jsonify({"token": token}), 200
     return jsonify({"message": "Invalid email or password"}), 401
 
 # Users
 @app.route("/users", methods=['POST'])
-@jwt_required()
 def add_new_user():
     data = request.get_json()
     new_user = UserController.add_user(data)
@@ -94,7 +104,8 @@ def delete_user(user_id):
 @jwt_required()
 def add_new_journal():
     data = request.get_json()
-    new_journal = JournalController.add_journal(data)
+    user_id = int(get_jwt_identity())
+    new_journal = JournalController.add_journal(data, user_id=user_id)
     if new_journal:
         return journal_schema.jsonify(new_journal), 201
     return jsonify({"message": "Missing required fields"}), 400
