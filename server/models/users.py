@@ -3,11 +3,14 @@ from sqlalchemy.orm import validates
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class User(db.Model):
+
+    __tablename__ = 'users'
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     email = db.Column(db.String)
     password = db.Column(db.String, nullable=False)
-    journals = db.relationship('journals', back_populates='user')
+    journals = db.relationship('Journal', back_populates='user')
 
     @validates('email')
     def validate_email(self, email):
@@ -22,4 +25,4 @@ class User(db.Model):
         self.password = generate_password_hash(password)
 
     def check_password(self, password):
-        return check_password_hash(password)
+        return check_password_hash(self.password, password)

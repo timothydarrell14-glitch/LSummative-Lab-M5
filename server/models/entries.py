@@ -1,8 +1,11 @@
 from extensions import db
 
 class Entry(db.Model):
+
+    __tablename__ = 'entries'
+
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String, nullable=False)
     entry = db.Column(db.String)
-    journal_id = db.Column(db.ForeignKey('journal.id'))
-    journal = db.relationship('journal', back_populates='entry')
+    journal_id = db.Column(db.ForeignKey('journals.id'))
+    journal = db.relationship('Journal', back_populates='entries')
