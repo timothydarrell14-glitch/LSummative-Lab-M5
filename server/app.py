@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_migrate import Migrate
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from marshmallow import Schema, fields
+from flask_cors import CORS
 
 from controllers.users_controller import UserController
 from controllers.journals_controller import JournalController
@@ -11,6 +12,7 @@ from models import *
 from schemas import *
 
 app = Flask(__name__)
+CORS(app)
 
 class LoginSchema(Schema):
     email = fields.Email(required=True)
