@@ -31,6 +31,20 @@ jwt.init_app(app)
 migrate = Migrate(app, db)
 
 ##--------------------------ROUTEs-----------------------------------##
+# Signup User
+@app.route("/signup", methods=['POST'])
+def signup():
+    data = request.get_json()
+    new_user = UserController.add_user(data)
+    if new_user:
+        token = create_access_token(identity=str(new_user.id), additional_claims={
+            'name': new_user.name,
+            'id': new_user.id,
+            'email': new_user.email
+        })
+        return jsonify({"token": token, "user": user_schema.dump(new_user)}), 201
+    return jsonify({"message": "Missing required fields"}), 400
+    
 # Login User
 @app.route("/login", methods=['POST'])
 def login():
@@ -47,17 +61,8 @@ def login():
             'id': user.id,
             'email': user.email
         })
-        return jsonify({"token": token}), 200
+        return jsonify({"token": token, "user": user_schema.dump(user)}), 200
     return jsonify({"message": "Invalid email or password"}), 401
-
-# Users
-@app.route("/users", methods=['POST'])
-def add_new_user():
-    data = request.get_json()
-    new_user = UserController.add_user(data)
-    if new_user:
-        return user_schema.jsonify(new_user), 201
-    return jsonify({"message": "Missing required fields"}), 400
 
 @app.route("/users", methods=['GET'])
 @jwt_required()
