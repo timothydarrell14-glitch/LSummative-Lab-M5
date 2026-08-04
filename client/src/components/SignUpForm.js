@@ -37,15 +37,15 @@ function SignUpForm({ onLogin }) {
   return (
     <form onSubmit={handleSubmit}>
       <FormField>
-              <Input
-                type="text"
-                id="name"
-                autoComplete="off"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-              <Label htmlFor="name">Name</Label>
-            </FormField>
+      <Label htmlFor="name">Name</Label>
+        <Input
+          type="text"
+          id="name"
+          autoComplete="off"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        </FormField>
       <FormField>
         <Label htmlFor="email">Email</Label>
         <Input
