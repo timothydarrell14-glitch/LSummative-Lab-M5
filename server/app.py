@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify
 from flask_migrate import Migrate
+from flask_jwt_extended import create_access_token
 
 from extensions import db, ma, jwt
 from models import Entry, Journal, User
+from schemas import *
 
 app = Flask(__name__)
 
@@ -28,8 +30,25 @@ jwt.init_app(app)
 
 migrate = Migrate(app, db)
 
-#--------------------------ROUTEs-----------------------------------#
+##--------------------------ROUTEs-----------------------------------##
+# Login User
+@app.route("/login", methods=['POST'])
+def login():
+    data = user_schema.load(request.get_json())
+    if data:
+        user = User.query.filter_by(email=data.email).first()
+        if user and user.check_password(data.password):
+            token = create_access_token(identity=user.id, claims={
+                user.name: user.name,
+                user.id: user.id,
+                user.email: user.email
+            })
+            return jsonify({"token": token}), 200
+    return jsonify({"message": "Invalid email or password"}), 401
 
+# Users
+# Journals
+# Entries
 
 
 #--------------------------RUN--------------------------------#

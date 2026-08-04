@@ -1,8 +1,11 @@
 from extensions import db
+from marshmallow import EXCLUDE
 
 class Journal(db.Model):
 
     __tablename__ = 'journals'
+
+    unknown = EXCLUDE
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
