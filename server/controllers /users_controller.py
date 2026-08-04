@@ -22,7 +22,7 @@ class UserController:
     @classmethod
     def get_all_users(cls):
         query = User.query
-        return paginate(query, page=1, per_page=10)
+        return paginate(query=query)
 
 # Get a specific user by ID from the database
     @classmethod

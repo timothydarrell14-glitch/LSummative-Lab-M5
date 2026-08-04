@@ -21,7 +21,7 @@ class JournalController:
     @classmethod
     def get_all_journals(cls, user_id):
         query = Journal.query.filter_by(user_id)
-        return paginate(query, page=1, per_page=10)
+        return paginate(query=query)
 
 # Get a specific journal by ID from the database
     @classmethod

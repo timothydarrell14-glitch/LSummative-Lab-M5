@@ -21,7 +21,7 @@ class EntryController:
     @classmethod
     def get_all_entries(cls, current_user):
         query = Entry.query.filter_by(user_id=current_user)
-        return paginate(query, page=1, per_page=10)
+        return paginate(query=query)
 
 # Get a specific entry by ID from the database
     @classmethod

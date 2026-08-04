@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request, jsonify
 from flask_migrate import Migrate
 
 from extensions import db, ma, jwt
@@ -8,7 +8,9 @@ app = Flask(__name__)
 
 #-------------------------PAGINATE-----------------------------------#
 
-def paginate(query, page, per_page):
+def paginate(query):
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
     paginated = query.paginate(page=page, per_page=per_page, error_out=False)
     items = paginated.items
     total = paginated.total
