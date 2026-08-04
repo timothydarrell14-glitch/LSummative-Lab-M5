@@ -1,6 +1,6 @@
 from extensions import db
 from models.journals import Journal
-from app import paginate
+from utils import paginate
 
 ## CRUD OPERATIONS
 class JournalController:
