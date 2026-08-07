@@ -1,16 +1,27 @@
 # LSummative-Lab-M5
 
-This project is a Flask-based journaling API with JWT authentication. It supports user registration and login, journal management, and entry management for each journal.
+This project is a full-stack journaling application with a React frontend and a Flask backend. It lets users sign up, log in, and manage personal journals and journal entries with JWT-based authentication.
 
-## What the app does
+## Current functionality
 
-The backend lets users:
+### Frontend
+The React client currently provides:
 
-- Register and log in to receive a JWT token
-- Create, read, update, and delete users
-- Create, read, update, and delete journals
-- Create, read, update, and delete journal entries
-- Access protected routes using a bearer token
+- A login form
+- A sign-up form
+- Persistent authentication using a JWT stored in local storage
+- A simple authenticated experience that checks the current user via `/me`
+
+### Backend
+The Flask API currently supports:
+
+- User registration with `/signup`
+- User login with `/login`
+- Token-based authentication for protected routes
+- User lookup and profile checks via `/me`
+- CRUD operations for users
+- CRUD operations for journals
+- CRUD operations for journal entries
 
 ## Tech stack
 
@@ -20,6 +31,8 @@ The backend lets users:
 - Flask-Migrate
 - Flask-Marshmallow
 - Flask-JWT-Extended
+- Flask-CORS
+- React
 - SQLite
 
 ## Project structure
@@ -27,18 +40,22 @@ The backend lets users:
 ```text
 LSummative-Lab-M5/
 ├── client/              # React frontend
+│   ├── public/          # Static assets
+│   └── src/             # React components and pages
 ├── server/              # Flask backend
-│   ├── app.py           # Flask app and routes
-│   ├── controllers/     # CRUD controller logic
-│   ├── models/          # SQLAlchemy models
-│   ├── schemas/         # Marshmallow schemas
+│   ├── app/             # Application package
+│   │   ├── controllers/ # Business logic for users, journals, entries
+│   │   ├── models/      # SQLAlchemy models
+│   │   ├── routes/      # Flask route definitions
+│   │   └── schemas/     # Marshmallow schemas
+│   ├── main.py          # Flask app entry point
 │   └── seed.py          # Seed script for demo data
 └── README.md
 ```
 
 ## Getting started
 
-From the server folder:
+### 1. Set up the backend
 
 ```bash
 cd server
@@ -47,27 +64,47 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Run the app:
+Run the API:
 
 ```bash
-python3 app.py
+python3 main.py
 ```
 
 The server will start on:
 
 ```text
-http://127.0.0.1:5555
+http://localhost:5555
+```
+
+### 2. Set up the frontend
+
+```bash
+cd client
+npm install
+```
+
+Start the React app:
+
+```bash
+npm start
+```
+
+The frontend will run on:
+
+```text
+http://localhost:4000
 ```
 
 ## API routes
 
 ### Authentication
 
-- `POST /login` – log in a user and receive a JWT token
+- `POST /signup` – create a new user and return a JWT token
+- `POST /login` – log in a user and return a JWT token
+- `GET /me` – return the authenticated user from the JWT token
 
 ### Users
 
-- `POST /users` – create a user
 - `GET /users` – list users (protected)
 - `GET /users/<user_id>` – get one user (protected)
 - `PUT /users/<user_id>` – update a user (protected)
@@ -83,7 +120,7 @@ http://127.0.0.1:5555
 
 ### Entries
 
-- `POST /entries` – create an entry (protected)
+- `POST /entries` – create a journal entry (protected)
 - `GET /entries` – list entries (protected)
 - `GET /entries/<entry_id>` – get one entry (protected)
 - `PUT /entries/<entry_id>` – update an entry (protected)
@@ -91,10 +128,9 @@ http://127.0.0.1:5555
 
 ## Example auth flow
 
-1. Create a user with `POST /users`
-2. Log in with `POST /login`
-3. Copy the returned token
-4. Send it as a bearer token in the `Authorization` header for protected routes
+1. Open the React app and sign up or log in.
+2. The app stores the returned JWT token in local storage.
+3. The frontend sends that token in the `Authorization` header for protected requests.
 
 ## Seed data
 
@@ -115,5 +151,6 @@ This creates:
 ## Notes
 
 - The app uses SQLite by default.
-- JWTs are required for all protected routes except `/login`.
-- The frontend in the `client/` folder consumes this API.
+- JWTs are required for protected routes.
+- The frontend expects the API to be available at `http://localhost:5555` and the React app at `http://localhost:4000`.
+- The client environment variable `REACT_APP_API_URL` should point to the backend URL when running the frontend.
