@@ -8,7 +8,7 @@ function LoginForm({ onLogin }) {
   const [isLoading, setIsLoading] = useState(false);
 
   function handleSubmit(e) {
-    const API_URL = process.env.REACT_APP_API_URL
+    const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5555'
     e.preventDefault();
     setIsLoading(true);
     fetch(`${API_URL}/login`, {

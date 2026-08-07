@@ -6,7 +6,7 @@ function App() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const API_URL = process.env.REACT_APP_API_URL
+    const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5555'
     const token = localStorage.getItem('token')
     if(!token) return
     fetch(`${API_URL}/me`, {

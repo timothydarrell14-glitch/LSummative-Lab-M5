@@ -28,7 +28,7 @@ def create_app():
     app = Flask(__name__)
     CORS(
         app,
-        origins=os.getenv("FRONTEND_URL"),
+        origins=os.getenv("FRONTEND_URL") or "http://localhost:4000",
         support_credentials=True,
         allow_headers=["Content-Type", "Authorization"],
         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
