@@ -8,9 +8,10 @@ function LoginForm({ onLogin }) {
   const [isLoading, setIsLoading] = useState(false);
 
   function handleSubmit(e) {
+    const API_URL = process.env.REACT_APP_API_URL
     e.preventDefault();
     setIsLoading(true);
-    fetch("http://127.0.0.1:5555/login", {
+    fetch(`${API_URL}/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

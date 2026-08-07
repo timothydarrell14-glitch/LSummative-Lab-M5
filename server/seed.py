@@ -1,8 +1,9 @@
 from app import app
-from extensions import db
-from models.users import User
-from models.journals import Journal
-from models.entries import Entry
+from server.app.extensions import db
+
+from server.app.models.users import User
+from server.app.models.journals import Journal
+from server.app.models.entries import Entry
 
 
 def seed_database():

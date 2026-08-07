@@ -1,6 +1,6 @@
-from models.users import User
-from extensions import db
-from utils import paginate
+from app.models.users import User
+from app.extensions import db
+from app.utils import paginate
 
 
 ## CRUD OPERATIONS
@@ -55,3 +55,7 @@ class UserController:
         db.session.delete(user)
         db.session.commit()
         return True
+
+    @classmethod
+    def get_user_by_email(cls, email):
+        return User.query.filter_by(email=email).first()

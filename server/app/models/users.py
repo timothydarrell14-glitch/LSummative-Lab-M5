@@ -1,4 +1,4 @@
-from extensions import db
+from app.extensions import db
 from sqlalchemy.orm import validates
 from werkzeug.security import generate_password_hash, check_password_hash
 from marshmallow import EXCLUDE
@@ -16,7 +16,7 @@ class User(db.Model):
     journals = db.relationship('Journal', back_populates='user')
 
     @validates('email')
-    def validate_email(self, email):
+    def validate_email(self, key, email):
         if not isinstance(email, str):
             raise ValueError('email must be a string')
         email = email.strip().lower()

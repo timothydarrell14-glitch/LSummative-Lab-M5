@@ -6,13 +6,18 @@ function App() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    fetch("/me", {
+    const API_URL = process.env.REACT_APP_API_URL
+    const token = localStorage.getItem('token')
+    if(!token) return
+    fetch(`${API_URL}/me`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`
       }
     }).then((r) => {
       if (r.ok) {
         r.json().then((user) => setUser(user));
+      } else if (r.status === 422 || r.status === 401) {
+        localStorage.removeItem("token")
       }
     });
   }, []);

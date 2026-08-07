@@ -1,5 +1,5 @@
-from extensions import ma
-from models.entries import Entry
+from app.extensions import ma
+from app.models.entries import Entry
 
 class EntrySchema(ma.SQLAlchemyAutoSchema):
     model = Entry

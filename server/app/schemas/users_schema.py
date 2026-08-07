@@ -1,7 +1,7 @@
-from extensions import ma
+from app.extensions import ma
 from marshmallow import fields
 
-from models.users import User
+from app.models.users import User
 
 class UserSchema(ma.SQLAlchemyAutoSchema):
     class Meta:

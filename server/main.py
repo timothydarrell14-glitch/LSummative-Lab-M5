@@ -1,18 +1,27 @@
-from flask import Flask, request, jsonify
+import os
+
+from flask import Flask, jsonify, request
 from flask_migrate import Migrate
-from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from marshmallow import Schema, fields
 from flask_cors import CORS
+from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token
 
-from controllers.users_controller import UserController
-from controllers.journals_controller import JournalController
-from controllers.entries_controller import EntryController
-from extensions import db, ma, jwt
-from models import *
-from schemas import *
+from app.extensions import db, ma, jwt
+from app.controllers.users_controller import UserController
+from app.controllers.entries_controller import EntryController
+from app.controllers.journals_controller import JournalController
+
+from app.schemas.entries_schema import entry_schema, entries_schema
+from app.schemas.journals_schema import journal_schema, journals_schema
+from app.schemas.users_schema import user_schema, users_schema
+
 
 app = Flask(__name__)
-CORS(app)
+CORS(app,
+    origins=["http://localhost:4000"],
+    support_credentials=True,
+    allow_headers=["Content-Type", "Authorization"],
+    methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
 
 class LoginSchema(Schema):
     email = fields.Email(required=True)
@@ -22,7 +31,7 @@ login_schema = LoginSchema()
 
 #-------------------------CONFIGs------------------------------------#
 
-app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///journals.db'
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv('DATABASE_URL') or 'sqlite:///journals.db'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["JWT_SECRET_KEY"] = 'jwt_secret_key'
 
@@ -31,6 +40,17 @@ ma.init_app(app)
 jwt.init_app(app)
 
 migrate = Migrate(app, db)
+
+#------------------------ROUTES--------------------------------#
+@app.route('/')
+def home():
+    return jsonify({'message': "Welcome to this API"}), 200
+
+@app.route('/me', methods=['GET'])
+@jwt_required()
+def get_user():
+    user = get_jwt_identity()
+    return jsonify(user), 200
 
 ##--------------------------ROUTEs-----------------------------------##
 # Signup User
@@ -56,7 +76,7 @@ def login():
     except Exception:
         return jsonify({"message": "Invalid email or password"}), 400
 
-    user = User.query.filter_by(email=data['email']).first()
+    user = UserController.get_user_by_email(data['email'])
     if user and user.check_password(data['password']):
         token = create_access_token(identity=str(user.id), additional_claims={
             'name': user.name,
@@ -178,7 +198,6 @@ def delete_entry(entry_id):
     if entry is None:
         return jsonify({"message": "Entry not found"}), 404
     return jsonify({"message": "Entry deleted successfully"}), 200
-
 
 #--------------------------RUN--------------------------------#
 

@@ -1,6 +1,6 @@
-from extensions import db
-from models.entries import Entry
-from utils import paginate
+from app.extensions import db
+from app.models.entries import Entry
+from app.utils import paginate
 
 
 ## CRUD OPERATIONS

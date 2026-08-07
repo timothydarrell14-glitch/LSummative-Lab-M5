@@ -10,10 +10,11 @@ function SignUpForm({ onLogin }) {
   const [isLoading, setIsLoading] = useState(false);
 
   function handleSubmit(e) {
+    const API_URL = process.env.REACT_APP_API_URL
     e.preventDefault();
     setErrors([]);
     setIsLoading(true);
-    fetch("http://127.0.0.1:5555/signup", {
+    fetch(`${API_URL}/signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

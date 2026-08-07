@@ -1,5 +1,5 @@
-from extensions import ma
-from models.journals import Journal
+from app.extensions import ma
+from app.models.journals import Journal
 
 class JournalSchema(ma.SQLAlchemyAutoSchema):
     model = Journal
