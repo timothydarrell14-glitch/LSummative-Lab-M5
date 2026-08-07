@@ -1,9 +1,12 @@
-from app import app
-from server.app.extensions import db
+from app import create_app
+from app.extensions import db
 
-from server.app.models.users import User
-from server.app.models.journals import Journal
-from server.app.models.entries import Entry
+from app.models.users import User
+from app.models.journals import Journal
+from app.models.entries import Entry
+
+
+app = create_app()
 
 
 def seed_database():
