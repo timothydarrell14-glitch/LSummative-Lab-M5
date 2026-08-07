@@ -18,7 +18,7 @@ from app.schemas.users_schema import user_schema, users_schema
 
 app = Flask(__name__)
 CORS(app,
-    origins=["http://localhost:4000"],
+    origins=os.getenv('FRONTEND_URL') or 'sqlite:///journals.db',
     support_credentials=True,
     allow_headers=["Content-Type", "Authorization"],
     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
